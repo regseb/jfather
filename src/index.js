@@ -4,6 +4,6 @@
  * @author Sébastien Règne
  */
 
-import { load, merge, parse } from "./jfather.js";
+import { extend, load, merge, parse } from "./jfather.js";
 
-export default { load, merge, parse };
+export default { extend, load, merge, parse };

@@ -9,7 +9,12 @@ import JFather from "../mod.js";
 describe("mod.js", function () {
     describe("JFather", function () {
         it("should export JFather as default", function () {
-            assert.deepEqual(Object.keys(JFather), ["load", "merge", "parse"]);
+            assert.deepEqual(Object.keys(JFather), [
+                "extend",
+                "load",
+                "merge",
+                "parse",
+            ]);
         });
     });
 });
