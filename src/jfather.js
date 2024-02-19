@@ -105,7 +105,7 @@ export const merge = function (parent, child) {
         return clone(child);
     }
 
-    const overrode = /** @type {Record<string, any>} */ ({});
+    const overridden = /** @type {Record<string, any>} */ ({});
     for (const key of new Set([
         ...Object.keys(parent),
         ...Object.keys(child),
@@ -118,18 +118,18 @@ export const merge = function (parent, child) {
         // Si la propriété est dans les deux objets : fusionner les deux
         // valeurs.
         if (key in parent && key in child) {
-            overrode[key] = merge(parent[key], child[key]);
+            overridden[key] = merge(parent[key], child[key]);
             // Si la propriété est seulement dans l'objet parent.
         } else if (key in parent) {
-            overrode[key] = clone(parent[key]);
+            overridden[key] = clone(parent[key]);
             // Si la propriété est seulement dans l'objet enfant.
         } else {
-            overrode[key] = clone(child[key]);
+            overridden[key] = clone(child[key]);
         }
 
         // Si la valeur est un tableau : chercher si l'objet enfant a des
         // surcharges d'éléments.
-        if (Array.isArray(overrode[key])) {
+        if (Array.isArray(overridden[key])) {
             const overelemRegex = new RegExp(
                 `^\\$${key}\\[(?<index>\\d*)\\]$`,
                 "u",
@@ -139,17 +139,17 @@ export const merge = function (parent, child) {
                 .filter(([i]) => undefined !== i);
             for (const [index, value] of overelems) {
                 if ("" === index) {
-                    overrode[key].push(clone(value));
+                    overridden[key].push(...clone(value));
                 } else {
-                    overrode[key][Number(index)] = merge(
-                        overrode[key][Number(index)],
+                    overridden[key][Number(index)] = merge(
+                        overridden[key][Number(index)],
                         value,
                     );
                 }
             }
         }
     }
-    return overrode;
+    return overridden;
 };
 
 /**

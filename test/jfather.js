@@ -116,26 +116,26 @@ describe("jfather.js", function () {
 
     describe("merge()", function () {
         it("should return second when first isn't object", function () {
-            const overrode = jfather.merge("foo", { bar: "baz" });
-            assert.deepEqual(overrode, { bar: "baz" });
+            const overridden = jfather.merge("foo", { bar: "baz" });
+            assert.deepEqual(overridden, { bar: "baz" });
         });
 
         it("should return second when second isn't object", function () {
-            const overrode = jfather.merge({ foo: "bar" }, "baz");
-            assert.equal(overrode, "baz");
+            const overridden = jfather.merge({ foo: "bar" }, "baz");
+            assert.equal(overridden, "baz");
         });
 
         it("should return second when both aren't object", function () {
-            const overrode = jfather.merge("foo", "bar");
-            assert.equal(overrode, "bar");
+            const overridden = jfather.merge("foo", "bar");
+            assert.equal(overridden, "bar");
         });
 
         it("should merge two objects", function () {
-            const overrode = jfather.merge(
+            const overridden = jfather.merge(
                 { foo: "bar", baz: "qux" },
                 { foo: "quux", corge: "grault" },
             );
-            assert.deepEqual(overrode, {
+            assert.deepEqual(overridden, {
                 foo: "quux",
                 baz: "qux",
                 corge: "grault",
@@ -143,30 +143,40 @@ describe("jfather.js", function () {
         });
 
         it("should override", function () {
-            const overrode = jfather.merge(
+            const overridden = jfather.merge(
                 { foo: ["bar", "baz"] },
-                { "$foo[0]": "qux", "$foo[]": "quux" },
+                { "$foo[0]": "qux", "$foo[]": ["quux", "corge"] },
             );
-            assert.deepEqual(overrode, { foo: ["qux", "baz", "quux"] });
+            assert.deepEqual(overridden, {
+                foo: ["qux", "baz", "quux", "corge"],
+            });
+        });
+
+        it("should ignore override of non-array", function () {
+            const overridden = jfather.merge(
+                { foo: "bar" },
+                { "$foo[]": "baz" },
+            );
+            assert.deepEqual(overridden, { foo: "bar" });
         });
 
         it("should override in sub-object", function () {
-            const overrode = jfather.merge(
+            const overridden = jfather.merge(
                 { foo: ["bar", "baz"], qux: { quux: ["corge", "grault"] } },
                 {
                     "$foo[0]": "garply",
-                    "$foo[]": "waldo",
+                    "$foo[]": ["waldo"],
                     qux: { fred: "plugh", "$quux[1]": "xyzzy" },
                 },
             );
-            assert.deepEqual(overrode, {
+            assert.deepEqual(overridden, {
                 foo: ["garply", "baz", "waldo"],
                 qux: { quux: ["corge", "xyzzy"], fred: "plugh" },
             });
         });
 
         it("should override in depth", function () {
-            const overrode = jfather.merge(
+            const overridden = jfather.merge(
                 { foo: [{ bar: "baz" }, { qux: "quux" }, "corge"] },
                 {
                     "$foo[0]": "grault",
@@ -174,7 +184,7 @@ describe("jfather.js", function () {
                     "$foo[2]": { fred: "plugh" },
                 },
             );
-            assert.deepEqual(overrode, {
+            assert.deepEqual(overridden, {
                 foo: [
                     "grault",
                     { qux: "quux", garply: "waldo" },
