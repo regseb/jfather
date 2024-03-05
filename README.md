@@ -10,100 +10,324 @@
 [![coverage][img-coverage]][link-coverage]
 [![semver][img-semver]][link-semver]
 
-> Boys use JSON; Men use JFather.
+> _Boys use JSON; Men use JFather._
 
 ## Overview
 
-**JFather** is
-[JSON](https://www.json.org/json-fr.html "JavaScript Object Notation") with
-features to merge, extend and override JSON objects.
+JFather is a utility library to **merge**, **extend** and **override**
+[JSON](https://www.json.org/json-fr.html "JavaScript Object Notation") objects.
 
 ```JavaScript
 import JFather from "jfather";
 
+// Merge two objects.
 const merged = JFather.merge(
-    { foo: "a", bar: "alpha" },
-    { foo: "b", baz: "beta" },
+  { "foo": "a", "bar": "alpha" },
+  { "foo": "b", "baz": "beta" }
 );
-
 console.log(merged);
-// { foo: "b", bar: "alpha", baz: "beta" }
+// { "foo": "b", "bar": "alpha", "baz": "beta" }
+
+// Extend an object.
+const extended = await JFather.extend({
+  "$extends": "https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json#members[1]",
+  "age": 34,
+  "quote": "With great fist comes great KO"
+});
+console.log(extended);
+// {
+//   "name": "Madame Uppercut",
+//   "age": 34,
+//   "secretIdentity": "Jane Wilson",
+//   "powers": [
+//     "Million tonne punch",
+//     "Damage resistance",
+//     "Superhuman reflexes"
+//   ],
+//   "quote": "With great fist comes great KO"
+// }
+
+// Override an object.
+const overridden = await JFather.merge(
+  { "foo": ["a", "alpha"] },
+  { "$foo[0]": "A", "$foo[]": ["BETA"] }
+);
+console.log(overridden);
+// {
+//   "foo": ["A", "alpha", "BETA"]
+// }
+
+// Extend, merge and override an object.
+const allIn = await JFather.extend({
+  "$extends": "https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json#members[0]",
+  "age": 27,
+  "$powers[2]": "Atomic breath",
+  "$powers[]": ["Matter Creation", "Reality Warping"],
+  "quote": "I'm no God. I'm not even a man. I'm just Molecule Man."
+});
+console.log(allIn);
+// {
+//   "name": "Molecule Man",
+//   "age": 27,
+//   "secretIdentity": "Dan Jukes",
+//   "powers": [
+//     "Radiation resistance",
+//     "Turning tiny",
+//     "Atomic breath",
+//     "Matter Creation",
+//     "Reality Warping
+//   ],
+//   "quote": "I'm no God. I'm not even a man. I'm just Molecule Man."
+// }
 ```
 
-## Install
+## Installation
 
-### Node.js
-
-JFather is published on [npm][link-npm].
+JFather is published on [npm][link-npm] (its CDN:
+[esm.sh](https://esm.sh/jfather),
+[jsDelivr](https://www.jsdelivr.com/package/npm/jfather),
+[UNPKG](https://unpkg.com/browse/jfather/)) and
+[Deno](https://deno.land/x/jfather).
 
 ```JavaScript
+// Node.js and Bun (after `npm install jfather`):
 import JFather from "jfather";
-```
 
-### Deno
+// Browsers:
+import JFather from "https://esm.sh/jfather@0";
+import JFather from "https://cdn.jsdelivr.net/npm/jfather@0";
+import JFather from "https://unpkg.com/jfather@0";
 
-The library is available in [Deno](https://deno.land/x/jfather).
-
-```JavaScript
+// Deno:
 import JFather from "https://deno.land/x/jfather/mod.js";
 ```
 
-### Browsers
+## Features
 
-It can also be accessed directly from the CDN
-[esm.sh](https://esm.sh/jfather) (ou
-[jsDelivr](https://www.jsdelivr.com/package/npm/jfather),
-[UNPKG](https://unpkg.com/browse/jfather/)) :
-
-```JavaScript
-import JFather from "https://esm.sh/jfather@0";
-// import JFather from "https://cdn.jsdelivr.net/npm/jfather@0";
-// import JFather from "https://unpkg.com/jfather@0";
-```
-
-## API
-
-- [`merge()`](#merge)
-- [`load()`](#load)
-- [`parse()`](#parse)
-
-### merge()
-
-Merge two variables.
+### Merge
 
 <!-- markdownlint-disable no-inline-html -->
 <table>
   <tr>
-    <th><code>a</code></th>
-    <th><code>b</code></th>
-    <th><code>JFather.merge(a, b)</code></th>
+    <th><code>parent</code></th>
+    <th><code>child</code></th>
+    <th><code>JFather.merge(parent, child)</code></th>
   </tr>
   <tr>
-    <td><code>1</code></td>
-    <td><code>2</code></td>
-    <td><code>2</code></td>
+    <td><pre lang="JSON"><code>1</code></pre></td>
+    <td><pre lang="JSON"><code>2</code></pre></td>
+    <td><pre lang="JSON"><code>2</code></pre></td>
   </tr>
   <tr>
-    <td><code>{ foo: "alpha", bar: "ALPHA" }</code></td>
-    <td><code>{ foo: "beta", baz: "BETA" }</code></td>
-    <td><code>{ foo: "beta", bar: "ALPHA", baz: "BETA" }</code></td>
-  </tr>
+    <td><pre lang="JSON"><code>{
+  "foo": "alpha",
+  "bar": "ALPHA"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": "beta",
+  "baz": "BETA"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": "beta",
+  "bar": "ALPHA",
+  "baz": "BETA"
+}</code></pre></td>
   </tr>
   <tr>
-    <td><code>{ foo: [1, 10, 11] }</code></td>
-    <td><code>{ foo: [2, 20, 22] }</code></td>
-    <td><code>{ foo: [2, 20, 22] }</code></td>
+    <td><pre lang="JSON"><code>{
+  "foo": [1, 10, 11]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": [2, 20, 22]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": [2, 20, 22]
+}</code></pre></td>
   </tr>
 </table>
 <!-- markdownlint-enable no-inline-html -->
 
-### load()
+### Extend
 
-Load an object from an URL.
+<!-- markdownlint-disable no-inline-html -->
+<table>
+  <tr>
+    <th><code>https://foo.bar/parent.json</code></th>
+    <th><code>child</code></th>
+    <th><code>await JFather.extend(child)</code></th>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$extends": "https://foo.bar/parent.json"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux"
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$extends": "https://foo.bar/parent.json",
+  "baz": "quux"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "baz": "quux"
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$extends": "https://foo.bar/parent.json",
+  "quux": "corge"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux",
+  "quux": "corge"
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "baz": "qux"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "quux": {
+    "$extends": "https://foo.bar/parent.json",
+    "corge": "grault"
+  }
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "quux": {
+    "baz": "qux",
+    "corge": "grault"
+  }
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "baz": {
+    "qux": [1, 2],
+    "quux": "a"
+  },
+  "corge": true
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$extends": "https://foo.bar/parent.json#baz"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "qux": [1, 2],
+  "quux": "a"
+}</code></pre></td>
+  </tr>
+</table>
+<!-- markdownlint-enable no-inline-html -->
 
-### parse()
+### Override
 
-Parse a string.
+<!-- markdownlint-disable no-inline-html -->
+<table>
+  <tr>
+    <th><code>parent</code></th>
+    <th><code>child</code></th>
+    <th><code>JFather.merge(parent, child)</code></th>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "foo": ["a", "Alpha"]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$foo[]": ["b", "Beta"]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": ["a", "Alpha", "b", "Beta"]
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "foo": ["a", "Alpha"]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$foo[0]": "A"
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": ["A", "Alpha"]
+}</code></pre></td>
+  </tr>
+  <tr>
+    <td><pre lang="JSON"><code>{
+  "foo": [{ "bar": ["a"] }]
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "$foo[0]": { "$bar[]": ["b", "c"] }
+}</code></pre></td>
+    <td><pre lang="JSON"><code>{
+  "foo": [{ "bar": ["a", "b", "c"] }]
+}</code></pre></td>
+  </tr>
+</table>
+<!-- markdownlint-enable no-inline-html -->
+
+## API
+
+- [`merge()`](#merge)
+- [`extend()`](#extend)
+- [`load()`](#load)
+- [`parse()`](#parse)
+
+### `merge()`
+
+Merge and override `parent` with `child`.
+
+```JavaScript
+JFather.merge(parent, child);
+```
+
+- Parameters:
+  - `parent`: The parent object.
+  - `child`: The child object.
+- Returns: The merged object.
+
+### `extend()`
+
+Extend `obj`, merge and override.
+
+```JavaScript
+JFather.extend(obj);
+```
+
+- Parameter:
+  - `obj`: The object with any `$extends` properties.
+- Returns: A promise with the extended object.
+
+### `load()`
+
+Load from a `url`, extend, merge and override.
+
+```JavaScript
+JFather.load(url);
+```
+
+- Parameter:
+  - `url`: The string containing the URL of a JSON file.
+- Returns: A promise with the loaded object.
+
+### `parse()`
+
+Parse a `text`, extend, merge and override.
+
+```JavaScript
+JFather.parse(text);
+```
+
+- Parameter:
+  - `text`: The string containing a JSON object.
+- Returns: A promise with the parsed object.
 
 [img-npm]: https://img.shields.io/npm/dm/jfather?label=npm&logo=npm&logoColor=whitesmoke
 [img-build]: https://img.shields.io/github/actions/workflow/status/regseb/jfather/ci.yml?branch=main&logo=github&logoColor=whitesmoke
