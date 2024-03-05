@@ -38,7 +38,7 @@ export const walk = function (obj, fn) {
  */
 export const walkAsync = async function (obj, fn) {
     if (Object === obj?.constructor) {
-        return fn(
+        return await fn(
             Object.fromEntries(
                 await Promise.all(
                     Object.entries(obj).map(async ([key, value]) => [
@@ -51,7 +51,7 @@ export const walkAsync = async function (obj, fn) {
     }
 
     if (Array.isArray(obj)) {
-        return Promise.all(obj.map((v) => walkAsync(v, fn)));
+        return await Promise.all(obj.map((v) => walkAsync(v, fn)));
     }
 
     return obj;
@@ -76,8 +76,16 @@ export const clone = function (obj) {
  * @throws {TypeError} Si le chemin est invalide.
  */
 export const query = function (obj, chain) {
+    if ("" === chain) {
+        return obj;
+    }
+
     const re = /^\.(?<prop>\w+)|^\[(?<index>\d+)\]/u;
-    const sub = { obj, chain };
+    const sub = {
+        obj,
+        // Préfixer le chemin avec un point si nécessaire.
+        chain: /^[.[]/u.test(chain) ? chain : "." + chain,
+    };
     while (0 !== sub.chain.length) {
         const result = re.exec(sub.chain);
         if (undefined !== result?.groups?.prop) {
@@ -153,14 +161,14 @@ export const merge = function (parent, child) {
 };
 
 /**
- * Étendre un objet JSON en utilisant les propriétes <code>"$extends"</code>.
+ * Étendre un objet JSON en utilisant les propriétés <code>"$extends"</code>.
  *
  * @param {Record<string, any>} obj L'objet qui sera étendu.
  * @returns {Promise<Record<string, any>>} Une promesse contenant l'objet
  *                                         étendu.
  */
 export const inherit = async function (obj) {
-    if (undefined === obj?.$extends) {
+    if (undefined === obj.$extends) {
         return obj;
     }
 
@@ -174,7 +182,7 @@ export const inherit = async function (obj) {
  * @param {any} obj L'objet qui sera étendu.
  * @returns {Promise<any>} Une promesse contenant l'objet étendu.
  */
-export const transform = function (obj) {
+export const extend = function (obj) {
     return walkAsync(obj, inherit);
 };
 
@@ -187,15 +195,16 @@ export const transform = function (obj) {
 export const load = async function (url) {
     const response = await fetch(url);
     const json = await response.json();
-    return transform(query(json, new URL(url).hash.replace(/^#/u, ".")));
+    // Enlever le "#" dans le hash de l'URL.
+    return await extend(query(json, new URL(url).hash.slice(1)));
 };
 
 /**
  * Parse une chaine de caractères.
  *
  * @param {string} text La chaine de caractères qui sera parsée.
- * @returns {any} L'objet.
+ * @returns {Promise<any>} L'objet.
  */
 export const parse = function (text) {
-    return transform(JSON.parse(text));
+    return extend(JSON.parse(text));
 };

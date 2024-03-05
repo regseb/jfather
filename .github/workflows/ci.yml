@@ -26,8 +26,8 @@ jobs:
         run: npm run lint -- --formatter github
 
       - name: Check types
-        run: npm run lint:types
         if: always()
+        run: npm run lint:types
 
   test:
     runs-on: ${{ matrix.os }}
