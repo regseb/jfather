@@ -15,9 +15,10 @@
 ## Overview
 
 JFather is a utility library to **merge**, **extend** and **override**
-[JSON](https://www.json.org/json-fr.html "JavaScript Object Notation") objects.
+[JSON](https://www.json.org/json-en.html "JavaScript Object Notation") objects.
 
-```JavaScript
+<!-- prettier-ignore-start -->
+```javascript
 import JFather from "jfather";
 
 // Merge two objects.
@@ -80,6 +81,7 @@ console.log(allIn);
 //   "quote": "I'm no God. I'm not even a man. I'm just Molecule Man."
 // }
 ```
+<!-- prettier-ignore-end -->
 
 ## Installation
 
@@ -89,7 +91,7 @@ JFather is published on [npm][link-npm] (its CDN:
 [UNPKG](https://unpkg.com/browse/jfather/)) and
 [Deno](https://deno.land/x/jfather).
 
-```JavaScript
+```javascript
 // Node.js and Bun (after `npm install jfather`):
 import JFather from "jfather";
 
@@ -114,33 +116,33 @@ import JFather from "https://deno.land/x/jfather/mod.js";
     <th><code>JFather.merge(parent, child)</code></th>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>1</code></pre></td>
-    <td><pre lang="JSON"><code>2</code></pre></td>
-    <td><pre lang="JSON"><code>2</code></pre></td>
+    <td><pre lang="json"><code>1</code></pre></td>
+    <td><pre lang="json"><code>2</code></pre></td>
+    <td><pre lang="json"><code>2</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": "alpha",
   "bar": "ALPHA"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": "beta",
   "baz": "BETA"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": "beta",
   "bar": "ALPHA",
   "baz": "BETA"
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": [1, 10, 11]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": [2, 20, 22]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": [2, 20, 22]
 }</code></pre></td>
   </tr>
@@ -157,52 +159,52 @@ import JFather from "https://deno.land/x/jfather/mod.js";
     <th><code>await JFather.extend(child)</code></th>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$extends": "https://foo.bar/parent.json"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux"
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$extends": "https://foo.bar/parent.json",
   "baz": "quux"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "quux"
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$extends": "https://foo.bar/parent.json",
   "quux": "corge"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux",
   "quux": "corge"
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": "qux"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "quux": {
     "$extends": "https://foo.bar/parent.json",
     "corge": "grault"
   }
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "quux": {
     "baz": "qux",
     "corge": "grault"
@@ -210,17 +212,17 @@ import JFather from "https://deno.land/x/jfather/mod.js";
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "baz": {
     "qux": [1, 2],
     "quux": "a"
   },
   "corge": true
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$extends": "https://foo.bar/parent.json#baz"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "qux": [1, 2],
   "quux": "a"
 }</code></pre></td>
@@ -238,36 +240,42 @@ import JFather from "https://deno.land/x/jfather/mod.js";
     <th><code>JFather.merge(parent, child)</code></th>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": ["a", "Alpha"]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$foo[]": ["b", "Beta"]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": ["a", "Alpha", "b", "Beta"]
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": ["a", "Alpha"]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "$foo[0]": "A"
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
+    <td><pre lang="json"><code>{
   "foo": ["A", "Alpha"]
 }</code></pre></td>
   </tr>
   <tr>
-    <td><pre lang="JSON"><code>{
-  "foo": [{ "bar": ["a"] }]
+    <td><pre lang="json"><code>{
+  "foo": [{
+    "bar": ["a"]
+  }]
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
-  "$foo[0]": { "$bar[]": ["b", "c"] }
+    <td><pre lang="json"><code>{
+  "$foo[0]": {
+    "$bar[]": ["b", "c"]
+  }
 }</code></pre></td>
-    <td><pre lang="JSON"><code>{
-  "foo": [{ "bar": ["a", "b", "c"] }]
+    <td><pre lang="json"><code>{
+  "foo": [{
+    "bar": ["a", "b", "c"]
+  }]
 }</code></pre></td>
   </tr>
 </table>
@@ -284,7 +292,7 @@ import JFather from "https://deno.land/x/jfather/mod.js";
 
 Merge and override `parent` with `child`.
 
-```JavaScript
+```javascript
 JFather.merge(parent, child);
 ```
 
@@ -297,7 +305,7 @@ JFather.merge(parent, child);
 
 Extend `obj`, merge and override.
 
-```JavaScript
+```javascript
 JFather.extend(obj, [options]);
 ```
 
@@ -314,7 +322,7 @@ JFather.extend(obj, [options]);
 
 Load from a `url`, extend, merge and override.
 
-```JavaScript
+```javascript
 JFather.load(url, [options]);
 ```
 
@@ -331,7 +339,7 @@ JFather.load(url, [options]);
 
 Parse a `text`, extend, merge and override.
 
-```JavaScript
+```javascript
 JFather.parse(text, [options]);
 ```
 
@@ -346,7 +354,7 @@ JFather.parse(text, [options]);
 
 [img-npm]: https://img.shields.io/npm/dm/jfather?label=npm&logo=npm&logoColor=whitesmoke
 [img-build]: https://img.shields.io/github/actions/workflow/status/regseb/jfather/ci.yml?branch=main&logo=github&logoColor=whitesmoke
-[img-coverage]: https://img.shields.io/endpoint?label=coverage&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fregseb%2Fjfather%2Fmain&logo=stryker&logoColor=whitesmoke
+[img-coverage]: https://img.shields.io/endpoint?label=coverage&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fregseb%2Fjfather%2Fmain
 [img-semver]: https://img.shields.io/badge/semver-2.0.0-blue?logo=semver&logoColor=whitesmoke
 [link-npm]: https://www.npmjs.com/package/jfather
 [link-build]: https://github.com/regseb/jfather/actions/workflows/ci.yml?query=branch%3Amain

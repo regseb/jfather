@@ -15,10 +15,10 @@ assignees: ""
 <!-- Please include a minimal reproduction case. Otherwise, include any
      information about how you're using JFather. -->
 
-```JavaScript
-    // Create JSON objects.
-    // Do something.
-    // ...
+```javascript
+// Create JSON objects.
+// Do something.
+// ...
 ```
 
 ### Expected behavior
@@ -27,8 +27,8 @@ assignees: ""
 
 ### Environment
 
-- JFather version<!-- e.g. 0.2.0 -->:
-- Platform version<!-- e.g. Chrome 122.0.6261.94, Node.js v20.11.1 -->:
+- JFather version<!-- e.g. 0.3.0 -->:
+- Platform version<!-- e.g. Chrome 125.0.6422.60, Node.js v20.13.1 -->:
 
 ### Additional context
 
