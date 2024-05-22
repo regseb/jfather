@@ -5,6 +5,16 @@
  */
 
 /**
+ * Les options des fonctions de JFather.
+ *
+ * @typedef {Object} Options
+ * @prop {Function} [request] La fonction pour récupérer un objet JSON à
+ *                            distance. Par défaut, l'objet est récupéré avec
+ *                            <code>fetch()</code> et
+ *                            <code>Response.prototype.json()</code>
+ */
+
+/**
  * Exécute une fonction sur un objet et tous ses sous-objets (en partant des
  * objets les plus profonds).
  *
@@ -163,48 +173,57 @@ export const merge = function (parent, child) {
 /**
  * Étendre un objet JSON en utilisant les propriétés <code>"$extends"</code>.
  *
- * @param {Record<string, any>} obj L'objet qui sera étendu.
+ * @param {Record<string, any>} obj       L'objet qui sera étendu.
+ * @param {Options}             [options] Les options.
  * @returns {Promise<Record<string, any>>} Une promesse contenant l'objet
  *                                         étendu.
  */
-export const inherit = async function (obj) {
+export const inherit = async function (obj, options) {
     if (undefined === obj.$extends) {
         return obj;
     }
 
     // eslint-disable-next-line no-use-before-define
-    return merge(await load(obj.$extends), obj);
+    return merge(await load(obj.$extends, options), obj);
 };
 
 /**
  * Étendre un objet récursivement.
  *
- * @param {any} obj L'objet qui sera étendu.
+ * @param {any}     obj       L'objet qui sera étendu.
+ * @param {Options} [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet étendu.
  */
-export const extend = function (obj) {
-    return walkAsync(obj, inherit);
+export const extend = function (obj, options) {
+    return walkAsync(obj, (/** @type {any} */ v) => inherit(v, options));
 };
 
 /**
  * Charge un objet JSON depuis une URL.
  *
- * @param {string} url L'URL du fichier JSON.
+ * @param {string}  url       L'URL du fichier JSON.
+ * @param {Options} [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet.
  */
-export const load = async function (url) {
-    const response = await fetch(url);
-    const json = await response.json();
+export const load = async function (url, options) {
+    let json;
+    if (undefined === options?.request) {
+        const response = await fetch(url);
+        json = await response.json();
+    } else {
+        json = await options.request(url);
+    }
     // Enlever le "#" dans le hash de l'URL.
-    return await extend(query(json, new URL(url).hash.slice(1)));
+    return await extend(query(json, new URL(url).hash.slice(1)), options);
 };
 
 /**
  * Parse une chaine de caractères.
  *
- * @param {string} text La chaine de caractères qui sera parsée.
+ * @param {string}  text      La chaine de caractères qui sera parsée.
+ * @param {Options} [options] Les options.
  * @returns {Promise<any>} L'objet.
  */
-export const parse = function (text) {
-    return extend(JSON.parse(text));
+export const parse = function (text, options) {
+    return extend(JSON.parse(text), options);
 };

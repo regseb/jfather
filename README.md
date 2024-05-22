@@ -298,11 +298,16 @@ JFather.merge(parent, child);
 Extend `obj`, merge and override.
 
 ```JavaScript
-JFather.extend(obj);
+JFather.extend(obj, [options]);
 ```
 
 - Parameter:
   - `obj`: The object with any `$extends` properties.
+  - `options`:
+    - `request`: The function for getting a JSON object remotely. By default,
+      the object is got with
+      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
+      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
 - Returns: A promise with the extended object.
 
 ### `load()`
@@ -310,11 +315,16 @@ JFather.extend(obj);
 Load from a `url`, extend, merge and override.
 
 ```JavaScript
-JFather.load(url);
+JFather.load(url, [options]);
 ```
 
 - Parameter:
   - `url`: The string containing the URL of a JSON file.
+  - `options`:
+    - `request`: The function for getting a JSON object remotely. By default,
+      the object is got with
+      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
+      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
 - Returns: A promise with the loaded object.
 
 ### `parse()`
@@ -322,11 +332,16 @@ JFather.load(url);
 Parse a `text`, extend, merge and override.
 
 ```JavaScript
-JFather.parse(text);
+JFather.parse(text, [options]);
 ```
 
 - Parameter:
   - `text`: The string containing a JSON object.
+  - `options`:
+    - `request`: The function for getting a JSON object remotely. By default,
+      the object is got with
+      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
+      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
 - Returns: A promise with the parsed object.
 
 [img-npm]: https://img.shields.io/npm/dm/jfather?label=npm&logo=npm&logoColor=whitesmoke

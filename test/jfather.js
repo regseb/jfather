@@ -376,6 +376,20 @@ describe("jfather.js", function () {
                 "https://corge.org/grault.json#foo",
             ]);
         });
+
+        it("should use 'request' option", async function () {
+            const fake = sinon.fake.resolves({ foo: "bar" });
+            const options = { request: fake };
+
+            const result = await jfather.load(
+                "https://baz.com/qux.json",
+                options,
+            );
+            assert.deepEqual(result, { foo: "bar" });
+
+            assert.equal(fake.callCount, 1);
+            assert.deepEqual(fake.firstCall.args, ["https://baz.com/qux.json"]);
+        });
     });
 
     describe("parse()", function () {
@@ -399,6 +413,23 @@ describe("jfather.js", function () {
 
             assert.equal(stub.callCount, 1);
             assert.deepEqual(stub.firstCall.args, ["https://baz.com/qux.json"]);
+        });
+
+        it("should use 'request' option", async function () {
+            const fake = sinon.fake.resolves({ foo: "bar" });
+            const options = { request: fake };
+
+            const result = await jfather.parse(
+                `{
+                    "$extends": "https://baz.com/qux.json",
+                    "quux": "corge"
+                 }`,
+                options,
+            );
+            assert.deepEqual(result, { foo: "bar", quux: "corge" });
+
+            assert.equal(fake.callCount, 1);
+            assert.deepEqual(fake.firstCall.args, ["https://baz.com/qux.json"]);
         });
     });
 });
