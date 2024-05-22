@@ -2,10 +2,9 @@
 
 ## [0.3.0](https://github.com/regseb/jfather/compare/v0.2.0...v0.3.0) (2024-05-22)
 
-
 ### Features
 
-* Allow to replace fetch() ([0f15ef5](https://github.com/regseb/jfather/commit/0f15ef530608946a2a1b3de24a30bef85d33cc79))
+- Allow to replace fetch() ([0f15ef5](https://github.com/regseb/jfather/commit/0f15ef530608946a2a1b3de24a30bef85d33cc79))
 
 ## [0.2.0](https://github.com/regseb/jfather/compare/v0.1.0...v0.2.0) (2024-03-05)
 
