@@ -12,7 +12,7 @@ jobs:
       id-token: write
     steps:
       - name: Run Release Please
-        uses: google-github-actions/release-please-action@v4
+        uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: node
@@ -45,11 +45,7 @@ jobs:
 
       - name: Format files
         if: ${{ steps.release.outputs.pr }}
-        run: >
-          npm run lint:fix --
-          CHANGELOG.md
-          package.json
-          package-lock.json
+        run: npm run lint:fix -- CHANGELOG.md package.json package-lock.json
 
       - name: Commit and push
         if: ${{ steps.release.outputs.pr }}
@@ -85,6 +81,7 @@ jobs:
 
       - name: Upload tarball to release
         if: ${{ steps.release.outputs.release_created }}
-        run: gh release upload ${{ steps.release.outputs.tag_name }} jfather-*.tgz
+        run:
+          gh release upload ${{ steps.release.outputs.tag_name }} jfather-*.tgz
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
