@@ -10,8 +10,7 @@
  * @typedef {Object} Options
  * @prop {Function} [request] La fonction pour récupérer un objet JSON à
  *                            distance. Par défaut, l'objet est récupéré avec
- *                            <code>fetch()</code> et
- *                            <code>Response.prototype.json()</code>
+ *                            `fetch()` et `Response.json()`.
  */
 
 /**
@@ -171,7 +170,7 @@ export const merge = function (parent, child) {
 };
 
 /**
- * Étendre un objet JSON en utilisant les propriétés <code>"$extends"</code>.
+ * Étendre un objet JSON en utilisant la propriété `"$extends"`.
  *
  * @param {Record<string, any>} obj       L'objet qui sera étendu.
  * @param {Options}             [options] Les options.
@@ -201,8 +200,8 @@ export const extend = function (obj, options) {
 /**
  * Charge un objet JSON depuis une URL.
  *
- * @param {string}  url       L'URL du fichier JSON.
- * @param {Options} [options] Les options.
+ * @param {string|URL} url       L'URL du fichier JSON.
+ * @param {Options}    [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet.
  */
 export const load = async function (url, options) {
