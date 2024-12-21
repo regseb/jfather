@@ -1,0 +1,9 @@
+{
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "always-update": true,
+  "extra-files": ["jsr.json"],
+  "packages": {
+    ".": {}
+  }
+}

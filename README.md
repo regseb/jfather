@@ -86,8 +86,8 @@ console.log(allIn);
 JFather is published on [npm][link-npm] (its CDN:
 [esm.sh](https://esm.sh/jfather),
 [jsDelivr](https://www.jsdelivr.com/package/npm/jfather),
-[UNPKG](https://unpkg.com/browse/jfather/)) and
-[Deno](https://deno.land/x/jfather).
+[UNPKG](https://unpkg.com/browse/jfather/)),
+[JSR](https://jsr.io/@regseb/jfather) and [Deno](https://deno.land/x/jfather).
 
 ```javascript
 // Node.js and Bun (after `npm install jfather`):
@@ -98,8 +98,8 @@ import JFather from "https://esm.sh/jfather@0";
 import JFather from "https://cdn.jsdelivr.net/npm/jfather@0";
 import JFather from "https://unpkg.com/jfather@0";
 
-// Deno:
-import JFather from "https://deno.land/x/jfather/mod.js";
+// Deno (after `deno add jsr:@regseb/jfather`):
+import JFather from "jsr:@regseb/jfather";
 ```
 
 ## Features
