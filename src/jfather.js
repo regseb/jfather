@@ -89,11 +89,11 @@ export const query = function (obj, chain) {
         return obj;
     }
 
-    const re = /^\.(?<prop>\w+)|^\[(?<index>\d+)\]/u;
+    const re = /^\.(?<prop>\w+)|^\[(?<index>\d+)\]/v;
     const sub = {
         obj,
         // Préfixer le chemin avec un point si nécessaire.
-        chain: /^[.[]/u.test(chain) ? chain : "." + chain,
+        chain: /^[.\[]/v.test(chain) ? chain : "." + chain,
     };
     while (0 !== sub.chain.length) {
         const result = re.exec(sub.chain);
@@ -153,7 +153,7 @@ export const merge = function (parent, child) {
         if (Array.isArray(overridden[key])) {
             const overelemRegex = new RegExp(
                 `^\\$${key}\\[(?<index>\\d*)\\]$`,
-                "u",
+                "v",
             );
             const overelems = Object.entries(child)
                 .map(([k, v]) => [overelemRegex.exec(k)?.groups?.index, v])

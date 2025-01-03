@@ -3,6 +3,8 @@
  * @author Sébastien Règne
  */
 
+import n from "eslint-plugin-n";
+
 /**
  * @import { Linter } from "eslint"
  */
@@ -11,6 +13,8 @@
  * @type {Linter.Config}
  */
 export default {
+    plugins: { n },
+
     rules: {
         // Suggestions.
         "no-restricted-properties": [
@@ -61,7 +65,14 @@ export default {
         "n/no-unpublished-require": "off",
         "n/no-unsupported-features/es-builtins": "error",
         "n/no-unsupported-features/es-syntax": "error",
-        "n/no-unsupported-features/node-builtins": "error",
+        "n/no-unsupported-features/node-builtins": [
+            "error",
+            {
+                // Ignorer les vérifications de Response et test.describe qui
+                // sont en expérimental dans Node v20.
+                ignores: ["Response", "test.describe"],
+            },
+        ],
         "n/process-exit-as-throw": "error",
 
         // Best Practices.

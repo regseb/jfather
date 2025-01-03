@@ -38,7 +38,7 @@ jobs:
         if: ${{ steps.release.outputs.pr }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.pr }}
@@ -65,7 +65,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
@@ -74,7 +74,9 @@ jobs:
 
       - name: Publish in npm
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --provenance
+        # Forcer l'accès public, car la valeur par défaut n'est pas utilisée.
+        # https://github.com/npm/cli/issues/7706
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -90,7 +92,7 @@ jobs:
 
       - name: Download tarball from npm
         if: ${{ steps.release.outputs.release_created }}
-        run: npm pack ${{ env.NPM_NAME }}
+        run: npm pack ${{ env.NPM_NAME }}@${{ steps.release.outputs.tag_name }}
 
       - name: Upload tarball to release
         if: ${{ steps.release.outputs.release_created }}
