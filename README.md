@@ -12,8 +12,14 @@
 
 ## Overview
 
-JFather is a utility library to **merge**, **extend** and **override**
-[JSON](https://www.json.org/json-en.html "JavaScript Object Notation") objects.
+JFather is a
+[JSON](https://www.json.org/json-en.html "JavaScript Object Notation") utility
+library to:
+
+- [**merge**](#merge) deeply two JSON objects.
+- [**extend**](#extend) a JSON objects with `"$extends"` property.
+- [**override**](#override) an array with `"$foo[0]"` (replace a value) or
+  `"$foo[]"` (append values) properties.
 
 <!-- prettier-ignore-start -->
 ```javascript
@@ -46,8 +52,8 @@ console.log(extended);
 //   "quote": "With great fist comes great KO"
 // }
 
-// Override an object.
-const overridden = await JFather.merge(
+// Override arrays of an object.
+const overridden = JFather.merge(
   { "foo": ["a", "alpha"] },
   { "$foo[0]": "A", "$foo[]": ["BETA"] }
 );
@@ -106,250 +112,289 @@ import JFather from "jsr:@regseb/jfather";
 
 ### Merge
 
-<!-- markdownlint-disable no-inline-html -->
-<table>
-  <tr>
-    <th><code>parent</code></th>
-    <th><code>child</code></th>
-    <th><code>JFather.merge(parent, child)</code></th>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>1</code></pre></td>
-    <td><pre lang="json"><code>2</code></pre></td>
-    <td><pre lang="json"><code>2</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "foo": "alpha",
-  "bar": "ALPHA"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": "beta",
-  "baz": "BETA"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": "beta",
-  "bar": "ALPHA",
-  "baz": "BETA"
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "foo": [1, 10, 11]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": [2, 20, 22]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": [2, 20, 22]
-}</code></pre></td>
-  </tr>
-</table>
-<!-- markdownlint-enable no-inline-html -->
+With any two variable types (except objects), merge returns the value of the
+child. The following example shows how to use it with numbers: the result is `2`
+(retrieved from the child value).
+
+```javascript
+const parent = 1;
+const child = 2;
+console.log(JFather.merge(parent, child));
+// 2
+```
+
+If both variables are objects, the object properties are merged one by one. In
+this example, the `"foo"` property overwrites that of the parent. The properties
+`"bar"` and `"baz"` are simply copied, as they are only in either the parent or
+the child.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = { "foo": "alpha", "bar": "ALPHA" };
+const child  = { "foo": "beta", "baz": "BETA" };
+console.log(JFather.merge(parent, child));
+// { "foo": "beta", "bar": "ALPHA", "baz": "BETA" }
+```
+<!-- prettier-ignore-end -->
+
+Merging is done recursively. The following example shows the merging of two
+objects, which in turn contains the merging of the `"foo"` sub-objects.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = {
+  "foo": { "bar": 1, "baz": 2 },
+  "qux": "a"
+};
+const child = {
+  "foo": { "bar": 10, "quux": 20 },
+  "corge": "b"
+};
+console.log(JFather.merge(parent, child));
+// {
+//   "foo": { "bar": 10, "baz": 2, "quux": 20 },
+//   "qux": "a",
+//   "corge": "b"
+// }
+```
+<!-- prettier-ignore-end -->
+
+Arrays are processed like any other type: the value of the child overrides that
+of the parent. For more detailed merging, see the [_Override_](#override)
+chapter, which shows how to merge arrays.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = { "foo": [1, 10, 11] };
+const child  = { "foo": [2, 20, 22] };
+console.log(JFather.merge(parent, child));
+// { "foo": [2, 20, 22] }
+```
+<!-- prettier-ignore-end -->
 
 ### Extend
 
-<!-- markdownlint-disable no-inline-html -->
-<table>
-  <tr>
-    <th><code>https://foo.bar/parent.json</code></th>
-    <th><code>child</code></th>
-    <th><code>await JFather.extend(child)</code></th>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "baz": "qux"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$extends": "https://foo.bar/parent.json"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "baz": "qux"
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "baz": "qux"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$extends": "https://foo.bar/parent.json",
-  "baz": "quux"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "baz": "quux"
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "baz": "qux"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$extends": "https://foo.bar/parent.json",
-  "quux": "corge"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "baz": "qux",
-  "quux": "corge"
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "baz": "qux"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "quux": {
-    "$extends": "https://foo.bar/parent.json",
-    "corge": "grault"
+You can extend an object using the `"$extends"` property, which must link to a
+JSON file. The remote JSON file and the current object will be merged.
+
+In this example, the child object is empty (except for the `"$extends"`
+property). The result therefore contains the parent object.
+
+<!-- prettier-ignore-start -->
+```javascript
+// https://example.com/parent.json
+// { "foo": 42 }
+
+const obj = { "$extends": "https://example.com/parent.json" };
+console.log(await JFather.extend(obj));
+// { "foo": 42 }
+```
+<!-- prettier-ignore-end -->
+
+As with merge, if a property is in both parent and child, the child's value is
+used. Otherwise, both parent and child properties are added to the result.
+
+<!-- prettier-ignore-start -->
+```javascript
+// https://example.com/parent.json
+// { "foo": "A", "bar": "Alpha" }
+
+const obj = {
+  "$extends": "https://example.com/parent.json",
+  "foo": "B",
+  "baz": "Beta"
+};
+console.log(await JFather.extend(obj));
+// { "foo": "B", "bar": "Alpha", "baz": "Beta" }
+```
+<!-- prettier-ignore-end -->
+
+It is possible to extend a child's sub-object. In the example below, the parent
+is merged with the child's `"bar"` sub-object.
+
+<!-- prettier-ignore-start -->
+```javascript
+// https://example.com/parent.json
+// { "foo": 42 }
+
+const obj = {
+  "bar": {
+    "$extends": "https://example.com/parent.json",
+    "baz": 3.14
   }
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "quux": {
-    "baz": "qux",
-    "corge": "grault"
-  }
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "baz": {
-    "qux": [1, 2],
-    "quux": "a"
-  },
-  "corge": true
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$extends": "https://foo.bar/parent.json#baz"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "qux": [1, 2],
-  "quux": "a"
-}</code></pre></td>
-  </tr>
-</table>
-<!-- markdownlint-enable no-inline-html -->
+};
+console.log(await JFather.extend(obj));
+// {
+//   "bar": { "foo": 42, "baz": 3.14 }
+// }
+```
+<!-- prettier-ignore-end -->
+
+In the parent link, you can define a path to retrieve a sub-object from the
+parent. The path is set in the URL hash:
+
+- `#foo`: the value of the `"foo"` property;
+- `#foo.bar`: the value of the `"bar"` sub-property in the `"foo"` property;
+- `#foo[42]`: the value of the forty-third array element in the `"foo"`
+  property;
+- `#foo[0].bar`: the value of the sub-property `"bar"` in the first element of
+  the array in the property `"foo"`.
+
+This example merges the `"foo"` property of the parent with the child.
+
+<!-- prettier-ignore-start -->
+```javascript
+// https://example.com/parent.json
+// {
+//   "foo": { "bar": [1, 2], "baz": "a" },
+//   "qux": true
+// }
+
+const obj = { "$extends": "https://example.com/parent.json#foo" };
+console.log(await JFather.extend(obj));
+// { "bar": [1, 2], "baz": "a" }
+```
+<!-- prettier-ignore-end -->
 
 ### Override
 
-<!-- markdownlint-disable no-inline-html -->
-<table>
-  <tr>
-    <th><code>parent</code></th>
-    <th><code>child</code></th>
-    <th><code>JFather.merge(parent, child)</code></th>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "foo": ["a", "Alpha"]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$foo[]": ["b", "Beta"]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": ["a", "Alpha", "b", "Beta"]
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
-  "foo": ["a", "Alpha"]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "$foo[0]": "A"
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": ["A", "Alpha"]
-}</code></pre></td>
-  </tr>
-  <tr>
-    <td><pre lang="json"><code>{
+If an object has arrays, the merge overwrites the parent's array with the
+child's. With the properties `"$foo[42]"` and `"$foo[]"`, you can refine the
+merge.
+
+In this example, the array `"foo"` is not overwritten. The first value of the
+`"foo"` array is merged with the value of the child's `"$foo[0]"` property. And
+the second value of `"foo"` is copied into the result.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = { "foo": ["a", "Alpha"] };
+const child  = { "$foo[0]": "B" };
+console.log(JFather.merge(parent, child));
+// { "foo": ["B", "Alpha"] }
+```
+<!-- prettier-ignore-end -->
+
+With `"$foo[]"`, the child's values are added to those of the parent. In the
+example below, the values `"b"` and `"Beta"` are added to the array of the
+`"foo"` property.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = { "foo": ["a", "Alpha"] };
+const child  = { "$foo[]": ["b", "Beta"] };
+console.log(JFather.merge(parent, child));
+// { "foo": ["a", "Alpha", "b", "Beta"] }
+```
+<!-- prettier-ignore-end -->
+
+You can combine the two overloads to, for example:
+
+- merge the first value of the parent's `"foo"` array with the value of the
+  child's `"$foo[0]"` property;
+- add the values `"b"` and `"c"` to the array of the sub-property `"bar"`.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = {
   "foo": [{
     "bar": ["a"]
   }]
-}</code></pre></td>
-    <td><pre lang="json"><code>{
+};
+const child = {
   "$foo[0]": {
     "$bar[]": ["b", "c"]
   }
-}</code></pre></td>
-    <td><pre lang="json"><code>{
-  "foo": [{
-    "bar": ["a", "b", "c"]
-  }]
-}</code></pre></td>
-  </tr>
-</table>
-<!-- markdownlint-enable no-inline-html -->
+};
+console.log(JFather.merge(parent, child));
+// {
+//   "foo": [{
+//     "bar": ["a", "b", "c"]
+//   }]
+// }
+```
+<!-- prettier-ignore-end -->
+
+If the child overloads a property that does not exist in the parent, the
+overload is ignored. The overload is also ignored if the parent object is not an
+array. In the following example, the child has two overloads which are ignored:
+the overload on the property `"bar"` which is not an array, and the overload on
+`"baz"` which does not exist in the parent.
+
+<!-- prettier-ignore-start -->
+```javascript
+const parent = { "foo": ["a", "A"], "bar": 42 };
+const child  = { "$bar[0]": 3.14, "$baz[]": ["beta"] };
+console.log(JFather.merge(parent, child));
+// { "foo": ["a", "A"], "bar": 42 }
+```
+<!-- prettier-ignore-end -->
 
 ## API
 
-- [`merge()`](#merge)
-- [`extend()`](#extend)
-- [`load()`](#load)
-- [`parse()`](#parse)
+- [`JFather.merge(parent, child)`](#jfathermergeparent-child)
+- [`JFather.extend(obj, [options])`](#jfatherextendobj-options)
+- [`JFather.load(url, [options])`](#jfatherloadurl-options)
+- [`JFather.parse(text, [options])`](#jfatherparsetext-options)
 
-### `merge()`
+### `JFather.merge(parent, child)`
 
 Merge and override `parent` with `child`.
 
-```javascript
-JFather.merge(parent, child);
-```
-
 - Parameters:
-  - `parent`: The parent object.
-  - `child`: The child object.
-- Returns: The merged object.
+  - `parent` [`<any>`][mdn-any] The parent object.
+  - `child` [`<any>`][mdn-any] The child object.
+- Returns: [`<any>`][mdn-any] The merged object.
 
-### `extend()`
+### `JFather.extend(obj, [options])`
 
 Extend `obj`, merge and override.
 
-```javascript
-JFather.extend(obj, [options]);
-```
+- Parameter:
+  - `obj` [`<any>`][mdn-any] The object with any `$extends` properties.
+  - `options` [`<Object>`][mdn-object]
+    - `request` [`<Function>`][mdn-function] The function for getting a JSON
+      object remotely. By default, the object is got with [`fetch()`][mdn-fetch]
+      and [`Response.json()`][mdn-response-json].
+- Returns: [`<Promise>`][mdn-promise] A promise with the extended object.
+
+### `JFather.load(url, [options])`
+
+Load from an `url`, extend, merge and override.
 
 - Parameter:
-  - `obj`: The object with any `$extends` properties.
-  - `options`:
-    - `request`: The function for getting a JSON object remotely. By default,
-      the object is got with
-      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
-      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
-- Returns: A promise with the extended object.
+  - `url` [`<String>`][mdn-string] | [`<URL>`][mdn-url] The string containing
+    the URL of a JSON file.
+  - `options` [`<Object>`][mdn-object]
+    - `request` [`<Function>`][mdn-function] The function for getting a JSON
+      object remotely. By default, the object is got with [`fetch()`][mdn-fetch]
+      and [`Response.json()`][mdn-response-json].
+- Returns: [`<Promise>`][mdn-promise] A promise with the loaded object.
 
-### `load()`
-
-Load from a `url`, extend, merge and override.
-
-```javascript
-JFather.load(url, [options]);
-```
-
-- Parameter:
-  - `url`: The string containing the URL of a JSON file.
-  - `options`:
-    - `request`: The function for getting a JSON object remotely. By default,
-      the object is got with
-      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
-      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
-- Returns: A promise with the loaded object.
-
-### `parse()`
+### `JFather.parse(text, [options])`
 
 Parse a `text`, extend, merge and override.
 
-```javascript
-JFather.parse(text, [options]);
-```
-
 - Parameter:
-  - `text`: The string containing a JSON object.
-  - `options`:
-    - `request`: The function for getting a JSON object remotely. By default,
-      the object is got with
-      [`fetch()`](https://developer.mozilla.org/Web/API/fetch) and
-      [`Response.json()`](https://developer.mozilla.org/Web/API/Response/json).
-- Returns: A promise with the parsed object.
+  - `text` [`<String>`][mdn-string] The string containing a JSON object.
+  - `options` [`<Object>`][mdn-object]
+    - `request` [`<Function>`][mdn-function] The function for getting a JSON
+      object remotely. By default, the object is got with [`fetch()`][mdn-fetch]
+      and [`Response.json()`][mdn-response-json].
+- Returns: [`<Promise>`][mdn-promise] A promise with the parsed object.
 
+[mdn-any]: https://developer.mozilla.org/Web/JavaScript/Data_structures
+[mdn-function]:
+  https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Function
+[mdn-object]:
+  https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Object
+[mdn-promise]:
+  https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Promise
+[mdn-string]:
+  https://developer.mozilla.org/JavaScript/Reference/Global_Objects/String
+[mdn-fetch]: https://developer.mozilla.org/Web/API/fetch
+[mdn-response-json]: https://developer.mozilla.org/Web/API/Response/json
+[mdn-url]: https://developer.mozilla.org/Web/API/URL
 [img-npm]:
   https://img.shields.io/npm/dm/jfather?label=npm&logo=npm&logoColor=whitesmoke
 [img-build]:

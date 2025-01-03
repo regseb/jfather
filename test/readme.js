@@ -45,8 +45,8 @@ describe("README.md", () => {
             });
         });
 
-        it("Override", async () => {
-            const overridden = await JFather.merge(
+        it("Override", () => {
+            const overridden = JFather.merge(
                 { foo: ["a", "alpha"] },
                 { "$foo[0]": "A", "$foo[]": ["BETA"] },
             );
@@ -88,7 +88,7 @@ describe("README.md", () => {
             it("Numbers", () => {
                 const merged = JFather.merge(1, 2);
 
-                assert.deepEqual(merged, 2);
+                assert.equal(merged, 2);
             });
 
             it("Objects", () => {
@@ -101,6 +101,19 @@ describe("README.md", () => {
                     foo: "beta",
                     bar: "ALPHA",
                     baz: "BETA",
+                });
+            });
+
+            it("Sub-objects", () => {
+                const merged = JFather.merge(
+                    { foo: { bar: 1, baz: 2 }, qux: "a" },
+                    { foo: { bar: 10, quux: 20 }, corge: "b" },
+                );
+
+                assert.deepEqual(merged, {
+                    foo: { bar: 10, baz: 2, quux: 20 },
+                    qux: "a",
+                    corge: "b",
                 });
             });
 
@@ -117,76 +130,63 @@ describe("README.md", () => {
         describe("Extend", () => {
             it("Empty", async () => {
                 const stub = mock.method(globalThis, "fetch", () =>
-                    Promise.resolve(Response.json({ baz: "qux" })),
+                    Promise.resolve(Response.json({ foo: 42 })),
                 );
 
                 const extended = await JFather.extend({
-                    $extends: "https://foo.bar/parent.json",
+                    $extends: "https://example.com/parent.json",
                 });
 
-                assert.deepEqual(extended, { baz: "qux" });
+                assert.deepEqual(extended, { foo: 42 });
 
                 assert.equal(stub.mock.callCount(), 1);
                 assert.deepEqual(stub.mock.calls[0].arguments, [
-                    "https://foo.bar/parent.json",
+                    "https://example.com/parent.json",
                 ]);
             });
 
-            it("Replace", async () => {
+            it("Merge", async () => {
                 const stub = mock.method(globalThis, "fetch", () =>
-                    Promise.resolve(Response.json({ baz: "qux" })),
+                    Promise.resolve(Response.json({ foo: "A", bar: "Alpha" })),
                 );
 
                 const extended = await JFather.extend({
-                    $extends: "https://foo.bar/parent.json",
-                    baz: "quux",
+                    $extends: "https://example.com/parent.json",
+                    foo: "B",
+                    baz: "Beta",
                 });
 
-                assert.deepEqual(extended, { baz: "quux" });
+                assert.deepEqual(extended, {
+                    foo: "B",
+                    bar: "Alpha",
+                    baz: "Beta",
+                });
 
                 assert.equal(stub.mock.callCount(), 1);
                 assert.deepEqual(stub.mock.calls[0].arguments, [
-                    "https://foo.bar/parent.json",
+                    "https://example.com/parent.json",
                 ]);
             });
 
-            it("Add", async () => {
+            it("Sub-object", async () => {
                 const stub = mock.method(globalThis, "fetch", () =>
-                    Promise.resolve(Response.json({ baz: "qux" })),
+                    Promise.resolve(Response.json({ foo: 42 })),
                 );
 
                 const extended = await JFather.extend({
-                    $extends: "https://foo.bar/parent.json",
-                    quux: "corge",
-                });
-
-                assert.deepEqual(extended, { baz: "qux", quux: "corge" });
-
-                assert.equal(stub.mock.callCount(), 1);
-                assert.deepEqual(stub.mock.calls[0].arguments, [
-                    "https://foo.bar/parent.json",
-                ]);
-            });
-
-            it("Child", async () => {
-                const stub = mock.method(globalThis, "fetch", () =>
-                    Promise.resolve(Response.json({ baz: "qux" })),
-                );
-
-                const extended = await JFather.extend({
-                    quux: {
-                        $extends: "https://foo.bar/parent.json",
-                        corge: "grault",
+                    bar: {
+                        $extends: "https://example.com/parent.json",
+                        baz: 3.14,
                     },
                 });
 
                 assert.deepEqual(extended, {
-                    quux: { baz: "qux", corge: "grault" },
+                    bar: { foo: 42, baz: 3.14 },
                 });
 
                 assert.equal(stub.mock.callCount(), 1);
                 assert.deepEqual(stub.mock.calls[0].arguments, [
-                    "https://foo.bar/parent.json",
+                    "https://example.com/parent.json",
                 ]);
             });
 
@@ -194,26 +194,35 @@ describe("README.md", () => {
                 const stub = mock.method(globalThis, "fetch", () =>
                     Promise.resolve(
                         Response.json({
-                            baz: { qux: [1, 2], quux: "a" },
-                            corge: true,
+                            foo: { bar: [1, 2], baz: "a" },
+                            qux: true,
                         }),
                     ),
                 );
 
                 const extended = await JFather.extend({
-                    $extends: "https://foo.bar/parent.json#baz",
+                    $extends: "https://example.com/parent.json#foo",
                 });
 
-                assert.deepEqual(extended, { qux: [1, 2], quux: "a" });
+                assert.deepEqual(extended, { bar: [1, 2], baz: "a" });
 
                 assert.equal(stub.mock.callCount(), 1);
                 assert.deepEqual(stub.mock.calls[0].arguments, [
-                    "https://foo.bar/parent.json#baz",
+                    "https://example.com/parent.json#foo",
                 ]);
             });
         });
 
         describe("Override", () => {
+            it("Replace", () => {
+                const merged = JFather.merge(
+                    { foo: ["a", "Alpha"] },
+                    { "$foo[0]": "B" },
+                );
+
+                assert.deepEqual(merged, { foo: ["B", "Alpha"] });
+            });
+
             it("Add", () => {
                 const merged = JFather.merge(
                     { foo: ["a", "Alpha"] },
@@ -221,15 +230,6 @@ describe("README.md", () => {
                 );
 
                 assert.deepEqual(merged, { foo: ["a", "Alpha", "b", "Beta"] });
-            });
-
-            it("Replace", () => {
-                const merged = JFather.merge(
-                    { foo: ["a", "Alpha"] },
-                    { "$foo[0]": "A" },
-                );
-
-                assert.deepEqual(merged, { foo: ["A", "Alpha"] });
             });
 
             it("All-in", () => {
@@ -241,6 +241,15 @@ describe("README.md", () => {
                 assert.deepEqual(merged, {
                     foo: [{ bar: ["a", "b", "c"] }],
                 });
+            });
+
+            it("Ignore", () => {
+                const merged = JFather.merge(
+                    { foo: ["a", "A"], bar: 42 },
+                    { "$bar[0]": 3.14, "$baz[]": ["beta"] },
+                );
+
+                assert.deepEqual(merged, { foo: ["a", "A"], bar: 42 });
             });
         });
     });
