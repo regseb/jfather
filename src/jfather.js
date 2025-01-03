@@ -118,7 +118,11 @@ export const query = function (obj, chain) {
  * @returns {any} La fusion des deux objets.
  */
 export const merge = function (parent, child) {
-    if (Object !== parent?.constructor || Object !== child?.constructor) {
+    if (
+        child === parent ||
+        Object !== parent?.constructor ||
+        Object !== child?.constructor
+    ) {
         return clone(child);
     }
 

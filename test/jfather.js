@@ -266,6 +266,12 @@ describe("jfather.js", () => {
     });
 
     describe("merge()", () => {
+        it("should return object when two objets are same", () => {
+            const obj = { foo: "bar" };
+            const result = jfather.merge(obj, obj);
+            assert.deepEqual(result, { foo: "bar" });
+        });
+
         it("should return second when first isn't object", () => {
             const result = jfather.merge("foo", { bar: "baz" });
             assert.deepEqual(result, { bar: "baz" });
