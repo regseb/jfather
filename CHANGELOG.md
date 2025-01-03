@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/regseb/jfather/compare/v0.3.0...v0.4.0) (2025-01-03)
+
+### Features
+
+- Publish in JSR.
+  ([acfd701](https://github.com/regseb/jfather/commit/acfd701a83ce0f753fef0e8964ef175dd36af9dc))
+
+### Bug Fixes
+
+- Optimize when same objects.
+  ([446ded3](https://github.com/regseb/jfather/commit/446ded3dd5249f73aaa5e144e8cc76fa6a03f16d))
+
 ## [0.3.0](https://github.com/regseb/jfather/compare/v0.2.0...v0.3.0) (2024-05-22)
 
 ### Features
