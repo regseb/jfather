@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { afterEach, describe, it, mock } from "node:test";
-import * as jfather from "../src/jfather.js";
+import * as jfather from "../../src/jfather.js";
 
 describe("jfather.js", () => {
     afterEach(() => {
@@ -251,8 +251,22 @@ describe("jfather.js", () => {
                 () => jfather.query({ foo: { bar: "baz" } }, ".qux.quux"),
                 {
                     name: "TypeError",
-                    message:
-                        "Cannot read properties of undefined (reading 'quux')",
+                    message: new RegExp(
+                        "^(" +
+                            // Vérifier le message d'erreur de Node.js.
+                            RegExp.escape(
+                                "Cannot read properties of undefined (reading" +
+                                    " 'quux')",
+                            ) +
+                            ")|(" +
+                            // Vérifier le message d'erreur de Bun.
+                            RegExp.escape(
+                                "undefined is not an object (evaluating" +
+                                    " 'sub.obj[result.groups.prop]')",
+                            ) +
+                            ")$",
+                        "v",
+                    ),
                 },
             );
         });

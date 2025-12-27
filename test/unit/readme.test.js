@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { afterEach, describe, it, mock } from "node:test";
-import JFather from "../src/index.js";
+import JFather from "../../src/index.js";
 
 // Tester les exemples présents dans le README.
 describe("README.md", () => {

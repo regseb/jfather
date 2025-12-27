@@ -27,7 +27,6 @@ export default {
         // Ignorer les fichiers temporaires de Vim.
         "!*.swp",
         // Ignorer les autres lockfiles.
-        "!/bun.lockb",
         "!/pnpm-lock.yaml",
         "!/yarn.lock",
     ],
@@ -55,8 +54,8 @@ export default {
             linters: ["prettier", "markdownlint"],
         },
         {
-            patterns: "*.json",
             linters: ["prettier", "prantlf__jsonlint"],
+            patterns: ["*.json", "bun.lock"],
             overrides: {
                 patterns: "/package.json",
                 linters: ["npm-package-json-lint", "publint"],

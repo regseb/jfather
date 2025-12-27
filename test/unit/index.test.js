@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import JFather from "../src/index.js";
+import JFather from "../../src/index.js";
 
 describe("index.js", () => {
     describe("JFather", () => {

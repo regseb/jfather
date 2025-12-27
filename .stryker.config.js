@@ -18,4 +18,7 @@ export default {
     reporters: ["dots", "clear-text"],
     tempDirName: ".stryker/tmp/",
     testRunner: "tap",
+    tap: {
+        testFiles: ["test/unit/**/*.test.js"],
+    },
 };
