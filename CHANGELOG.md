@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/regseb/jfather/compare/v0.4.0...v0.5.0) (2026-01-05)
+
+### Features
+
+- Export Options type.
+  ([2d0153b](https://github.com/regseb/jfather/commit/2d0153b923f228c0c812f2f3d4d84a77f6745a3c))
+- Support Bun.
+  ([47eb3f7](https://github.com/regseb/jfather/commit/47eb3f7509b658c230d250d4b0a05d3255021993))
+
 ## [0.4.0](https://github.com/regseb/jfather/compare/v0.3.0...v0.4.0) (2025-01-03)
 
 ### Features
