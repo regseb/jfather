@@ -1,0 +1,11 @@
+<svg role="img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M 1,82 44,7 H 56 L 99,82 93,93 H 7 Z M 50,38 31,71 h 38 Z"
+    fill="#808080"
+    stroke="#808080"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <path d="M 30,71 H 81 L 44,7 H 56 L 99,82 H 24 Z" fill="#4d4d4d" />
+  <path d="M 44.5,28.5 50,38 25,82 H 99 L 93,93 H 7 Z" fill="#1a1a1a" />
+</svg>
