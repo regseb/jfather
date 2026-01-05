@@ -2,8 +2,8 @@
 
 <!-- Utiliser du HTML (avec l'attribut "align" obsolète) pour faire flotter
      l'image à droite. -->
-<!-- markdownlint-disable-next-line no-inline-html-->
-<img src="asset/logo.svg" align="right" alt="">
+<!-- markdownlint-disable-next-line no-inline-html -->
+<img src="asset/logo.svg" align="right" width="100" height="100" alt="">
 
 [![npm][img-npm]][link-npm] [![build][img-build]][link-build]
 [![coverage][img-coverage]][link-coverage] [![semver][img-semver]][link-semver]
@@ -92,8 +92,8 @@ console.log(allIn);
 JFather is published on [npm][link-npm] (its CDN:
 [esm.sh](https://esm.sh/jfather),
 [jsDelivr](https://www.jsdelivr.com/package/npm/jfather),
-[UNPKG](https://unpkg.com/browse/jfather/)),
-[JSR](https://jsr.io/@regseb/jfather) and [Deno](https://deno.land/x/jfather).
+[UNPKG](https://unpkg.com/browse/jfather/)) and
+[JSR](https://jsr.io/@regseb/jfather).
 
 ```javascript
 // Node.js and Bun (after `npm install jfather`):

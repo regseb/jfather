@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+<svg role="img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path
     d="M 1,82 44,7 H 56 L 99,82 93,93 H 7 Z M 50,38 31,71 h 38 Z"
     fill="#808080"

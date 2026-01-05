@@ -2,5 +2,8 @@
   "name": "@regseb/jfather",
   "version": "0.4.0",
   "license": "MIT",
-  "exports": "./src/index.js"
+  "exports": "./src/index.js",
+  "publish": {
+    "include": ["src/", "types/", "LICENSE", "README.md", "package.json"]
+  }
 }

@@ -21,7 +21,7 @@
  * @param {Function} fn  La fonction appliquée sur tous les objets.
  * @returns {any} Le retour de la fonction.
  */
-export const walk = function (obj, fn) {
+export const walk = (obj, fn) => {
     if (Object === obj?.constructor) {
         return fn(
             Object.fromEntries(
@@ -45,7 +45,7 @@ export const walk = function (obj, fn) {
  * @param {Function} fn  La fonction asynchrone appliquée sur tous les objets.
  * @returns {Promise<any>} Une promesse contenant le retour de la fonction.
  */
-export const walkAsync = async function (obj, fn) {
+export const walkAsync = async (obj, fn) => {
     if (Object === obj?.constructor) {
         return await fn(
             Object.fromEntries(
@@ -72,7 +72,7 @@ export const walkAsync = async function (obj, fn) {
  * @param {any} obj Une variable quelconque.
  * @returns {any} Le clone de la variable d'entrée.
  */
-export const clone = function (obj) {
+export const clone = (obj) => {
     return walk(obj, (/** @type {any} */ v) => v);
 };
 
@@ -84,7 +84,7 @@ export const clone = function (obj) {
  * @returns {any} L'élément extrait.
  * @throws {TypeError} Si le chemin est invalide.
  */
-export const query = function (obj, chain) {
+export const query = (obj, chain) => {
     if ("" === chain) {
         return obj;
     }
@@ -93,7 +93,7 @@ export const query = function (obj, chain) {
     const sub = {
         obj,
         // Préfixer le chemin avec un point si nécessaire.
-        chain: /^[.\[]/v.test(chain) ? chain : "." + chain,
+        chain: /^[.\[]/v.test(chain) ? chain : `.${chain}`,
     };
     while (0 !== sub.chain.length) {
         const result = re.exec(sub.chain);
@@ -117,7 +117,7 @@ export const query = function (obj, chain) {
  * @param {any} child  L'objet enfant.
  * @returns {any} La fusion des deux objets.
  */
-export const merge = function (parent, child) {
+export const merge = (parent, child) => {
     if (
         child === parent ||
         Object !== parent?.constructor ||
@@ -152,7 +152,7 @@ export const merge = function (parent, child) {
         // surcharges d'éléments.
         if (Array.isArray(overridden[key])) {
             const overelemRegex = new RegExp(
-                `^\\$${key}\\[(?<index>\\d*)\\]$`,
+                String.raw`^\$${key}\[(?<index>\d*)\]$`,
                 "v",
             );
             const overelems = Object.entries(child)
@@ -181,7 +181,7 @@ export const merge = function (parent, child) {
  * @returns {Promise<Record<string, any>>} Une promesse contenant l'objet
  *                                         étendu.
  */
-export const inherit = async function (obj, options) {
+export const inherit = async (obj, options) => {
     if (undefined === obj.$extends) {
         return obj;
     }
@@ -197,7 +197,7 @@ export const inherit = async function (obj, options) {
  * @param {Options} [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet étendu.
  */
-export const extend = function (obj, options) {
+export const extend = (obj, options) => {
     return walkAsync(obj, (/** @type {any} */ v) => inherit(v, options));
 };
 
@@ -208,7 +208,7 @@ export const extend = function (obj, options) {
  * @param {Options}    [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet.
  */
-export const load = async function (url, options) {
+export const load = async (url, options) => {
     let json;
     if (undefined === options?.request) {
         const response = await fetch(url);
@@ -227,6 +227,6 @@ export const load = async function (url, options) {
  * @param {Options} [options] Les options.
  * @returns {Promise<any>} L'objet.
  */
-export const parse = function (text, options) {
+export const parse = (text, options) => {
     return extend(JSON.parse(text), options);
 };
