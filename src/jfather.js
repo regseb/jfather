@@ -6,6 +6,8 @@
 
 /* @ts-self-types="../types/jfather.d.ts" */
 
+import "./polyfills.js";
+
 /**
  * Les options des fonctions de JFather.
  *
@@ -154,7 +156,7 @@ export const merge = (parent, child) => {
         // surcharges d'éléments.
         if (Array.isArray(overridden[key])) {
             const overelemRegex = new RegExp(
-                String.raw`^\$${key}\[(?<index>\d*)\]$`,
+                String.raw`^\$${RegExp.escape(key)}\[(?<index>\d*)\]$`,
                 "v",
             );
             const overelems = Object.entries(child)

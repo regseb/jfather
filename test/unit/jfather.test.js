@@ -338,6 +338,17 @@ describe("jfather.js", () => {
             assert.deepEqual(result, { foo: "bar" });
         });
 
+        it("should escape special characters", () => {
+            const result = jfather.merge(
+                { "f..": ["bar"], foo: ["baz"] },
+                { "$f..[0]": "qux", "$foo[0]": "quux" },
+            );
+            assert.deepEqual(result, {
+                "f..": ["qux"],
+                foo: ["quux"],
+            });
+        });
+
         it("should override in sub-object", () => {
             const result = jfather.merge(
                 { foo: ["bar", "baz"], qux: { quux: ["corge", "grault"] } },
