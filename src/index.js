@@ -4,6 +4,8 @@
  * @author Sébastien Règne
  */
 
+/* @ts-self-types="../types/index.d.ts" */
+
 import { extend, load, merge, parse } from "./jfather.js";
 
 /**

@@ -4,6 +4,8 @@
  * @author Sébastien Règne
  */
 
+/* @ts-self-types="../types/jfather.d.ts" */
+
 /**
  * Les options des fonctions de JFather.
  *
