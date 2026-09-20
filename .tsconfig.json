@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "module": "nodenext",
-    "allowJs": true
+    "allowJs": true,
+    "types": ["node"]
   },
   "include": ["**/*", "**/.*", "**/.*/**/*", "**/.*/**/.*"],
   "exclude": [
     ".git/",
     ".idea/",
-    ".stryker/",
+    ".tmp/",
     ".vscode/",
     "jsdocs/",
     "node_modules/",

@@ -18,7 +18,7 @@ assignees: ""
 ### Environment
 
 - JFather version<!-- e.g. 0.5.0 -->:
-- Platform version<!-- e.g. Chrome 143.0.7499.146, Node v24.12.0 -->:
+- Platform version<!-- e.g. Chrome 153.0.8010.36, Node.js v26.9.0 -->:
 
 ### Additional context
 

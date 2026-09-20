@@ -5,8 +5,9 @@
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="asset/logo.svg" align="right" width="100" height="100" alt="">
 
-[![npm][img-npm]][link-npm] [![build][img-build]][link-build]
-[![coverage][img-coverage]][link-coverage] [![semver][img-semver]][link-semver]
+[![npm][img-npm]][link-npm] [![jsr][img-jsr]][link-jsr]
+![compatibility][img-compatibility][![node.js][img-node]][link-node][![bun][img-bun]][link-bun][![deno][img-deno]][link-deno][![chrome][img-chrome]][link-chrome][![firefox][img-firefox]][link-firefox][![safari][img-safari]][link-safari]
+[![build][img-build]][link-build] [![coverage][img-coverage]][link-coverage]
 
 > _Boys use JSON; Men use JFather._
 
@@ -92,8 +93,7 @@ console.log(allIn);
 JFather is published on [npm][link-npm] (its CDN:
 [esm.sh](https://esm.sh/jfather),
 [jsDelivr](https://www.jsdelivr.com/package/npm/jfather),
-[UNPKG](https://unpkg.com/browse/jfather/)) and
-[JSR](https://jsr.io/@regseb/jfather).
+[UNPKG](https://unpkg.com/browse/jfather/)) and [JSR][link-jsr].
 
 ```javascript
 // Node.js and Bun (after `npm install jfather`):
@@ -220,12 +220,12 @@ is merged with the child's `"bar"` sub-object.
 const obj = {
   "bar": {
     "$extends": "https://example.com/parent.json",
-    "baz": 3.14
+    "baz": 67
   }
 };
 console.log(await JFather.extend(obj));
 // {
-//   "bar": { "foo": 42, "baz": 3.14 }
+//   "bar": { "foo": 42, "baz": 67 }
 // }
 ```
 <!-- prettier-ignore-end -->
@@ -324,7 +324,7 @@ the overload on the property `"bar"` which is not an array, and the overload on
 <!-- prettier-ignore-start -->
 ```javascript
 const parent = { "foo": ["a", "A"], "bar": 42 };
-const child  = { "$bar[0]": 3.14, "$baz[]": ["beta"] };
+const child  = { "$bar[0]": 67, "$baz[]": ["beta"] };
 console.log(JFather.merge(parent, child));
 // { "foo": ["a", "A"], "bar": 42 }
 ```
@@ -396,16 +396,36 @@ Parse a `text`, extend, merge and override.
 [mdn-response-json]: https://developer.mozilla.org/Web/API/Response/json
 [mdn-url]: https://developer.mozilla.org/Web/API/URL
 [img-npm]:
-  https://img.shields.io/npm/dm/jfather?label=npm&logo=npm&logoColor=whitesmoke
+  https://img.shields.io/npm/dw/jfather?style=flat-square&label=npm&logo=npm
+[img-jsr]:
+  https://jsr.io/badges/@regseb/jfather/weekly-downloads?style=flat-square&labelColor=grey&label=jsr&logoColor=whitesmoke&color=4b0
+[img-compatibility]:
+  https://img.shields.io/badge/compatibility-grey?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDBBMTIgMTIgMCAwIDAgMCAxMmExMiAxMiAwIDAgMCAxMiAxMiAxMiAxMiAwIDAgMCAxMi0xMkExMiAxMiAwIDAgMCAxMiAwbTYuNSA2LjVhMS41IDEuNSAwIDAgMSAxLjA2LjQ0IDEuNSAxLjUgMCAwIDEgMCAyLjEybC05IDlhMS41IDEuNSAwIDAgMS0yLjEyIDBsLTUtNWExLjUgMS41IDAgMCAxIDAtMi4xMiAxLjUgMS41IDAgMCAxIDIuMTIgMGwzLjk0IDMuOTM5IDcuOTQtNy45NEExLjUgMS41IDAgMCAxIDE4LjUgNi41IiBmaWxsPSJ3aGl0ZXNtb2tlIi8+PC9zdmc+
+[img-node]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=node.js&logoColor=whitesmoke
+[img-bun]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=bun&logoColor=whitesmoke
+[img-deno]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=deno&logoColor=whitesmoke
+[img-chrome]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=googlechrome&logoColor=whitesmoke
+[img-firefox]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=firefox&logoColor=whitesmoke
+[img-safari]:
+  https://img.shields.io/badge/-blue?style=flat-square&logo=safari&logoColor=whitesmoke
 [img-build]:
-  https://img.shields.io/github/actions/workflow/status/regseb/jfather/ci.yml?branch=main&logo=github&logoColor=whitesmoke
+  https://img.shields.io/github/actions/workflow/status/regseb/jfather/ci.yml?branch=main&style=flat-square&logo=github&logoColor=whitesmoke
 [img-coverage]:
-  https://img.shields.io/endpoint?label=coverage&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fregseb%2Fjfather%2Fmain
-[img-semver]:
-  https://img.shields.io/badge/semver-2.0.0-blue?logo=semver&logoColor=whitesmoke
+  https://img.shields.io/endpoint?url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fregseb%2Fjfather%2Fmain&style=flat-square&label=coverage
 [link-npm]: https://www.npmjs.com/package/jfather
+[link-jsr]: https://jsr.io/@regseb/jfather
+[link-node]: https://nodejs.org/
+[link-bun]: https://bun.com/
+[link-deno]: https://deno.com/
+[link-chrome]: https://www.google.com/chrome/
+[link-firefox]: https://www.firefox.com/
+[link-safari]: https://www.apple.com/safari/
 [link-build]:
   https://github.com/regseb/jfather/actions/workflows/ci.yml?query=branch%3Amain
 [link-coverage]:
   https://dashboard.stryker-mutator.io/reports/github.com/regseb/jfather/main
-[link-semver]: https://semver.org/spec/v2.0.0.html "Semantic Versioning 2.0.0"

@@ -16,7 +16,7 @@ export default {
         "**",
         // Ignorer les répertoires et les fichiers générés.
         "!/.git/**",
-        "!/.stryker/**",
+        "!/.tmp/**",
         "!/jsdocs/**",
         "!/node_modules/**",
         "!/stryker.log",
@@ -29,6 +29,7 @@ export default {
         // Ignorer les fichiers temporaires de Vim.
         "!*.swp",
         // Ignorer les autres lockfiles.
+        "!/bun.lock",
         "!/pnpm-lock.yaml",
         "!/yarn.lock",
     ],

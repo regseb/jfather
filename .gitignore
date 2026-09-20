@@ -1,5 +1,5 @@
 # Ignorer les répertoires et les fichiers générés.
-/.stryker/
+/.tmp/
 /jsdocs/
 /node_modules/
 /stryker.log
@@ -12,5 +12,6 @@
 *.swp
 
 # Ignorer les autres lockfiles.
+/bun.lock
 /pnpm-lock.yaml
 /yarn.lock

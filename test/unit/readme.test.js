@@ -176,12 +176,12 @@ describe("README.md", () => {
                 const extended = await JFather.extend({
                     bar: {
                         $extends: "https://example.com/parent.json",
-                        baz: 3.14,
+                        baz: 67,
                     },
                 });
 
                 assert.deepEqual(extended, {
-                    bar: { foo: 42, baz: 3.14 },
+                    bar: { foo: 42, baz: 67 },
                 });
 
                 assert.equal(stub.mock.callCount(), 1);
@@ -246,7 +246,7 @@ describe("README.md", () => {
             it("Ignore", () => {
                 const merged = JFather.merge(
                     { foo: ["a", "A"], bar: 42 },
-                    { "$bar[0]": 3.14, "$baz[]": ["beta"] },
+                    { "$bar[0]": 67, "$baz[]": ["beta"] },
                 );
 
                 assert.deepEqual(merged, { foo: ["a", "A"], bar: 42 });

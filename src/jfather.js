@@ -21,8 +21,9 @@ import "./polyfills.js";
  * Exécute une fonction sur un objet et tous ses sous-objets (en partant des
  * objets les plus profonds).
  *
- * @param {any}      obj Une variable quelconque.
- * @param {Function} fn  La fonction appliquée sur tous les objets.
+ * @param {any}                                 obj Une variable quelconque.
+ * @param {(value: Record<string, any>) => any} fn  La fonction appliquée sur
+ *                                                  tous les objets.
  * @returns {any} Le retour de la fonction.
  */
 export const walk = (obj, fn) => {
@@ -45,8 +46,12 @@ export const walk = (obj, fn) => {
  * Exécute une fonction asynchrone sur un objet et tous ses sous-objets (en
  * partant des objets les plus profonds).
  *
- * @param {any}      obj Une variable quelconque.
- * @param {Function} fn  La fonction asynchrone appliquée sur tous les objets.
+ * @param {any}                                          obj Une variable
+ *                                                           quelconque.
+ * @param {(value: Record<string, any>) => Promise<any>} fn  La fonction
+ *                                                           asynchrone
+ *                                                           appliquée sur tous
+ *                                                           les objets.
  * @returns {Promise<any>} Une promesse contenant le retour de la fonction.
  */
 export const walkAsync = async (obj, fn) => {
@@ -73,11 +78,12 @@ export const walkAsync = async (obj, fn) => {
 /**
  * Clone récursivement un objet.
  *
- * @param {any} obj Une variable quelconque.
- * @returns {any} Le clone de la variable d'entrée.
+ * @template {any} T Le type de la variable.
+ * @param {T} obj Une variable quelconque.
+ * @returns {T} Le clone de la variable d'entrée.
  */
 export const clone = (obj) => {
-    return walk(obj, (/** @type {any} */ v) => v);
+    return walk(obj, (/** @type {Record<string, any>} */ v) => v);
 };
 
 /**
@@ -131,23 +137,22 @@ export const merge = (parent, child) => {
     }
 
     const overridden = /** @type {Record<string, any>} */ ({});
-    for (const key of new Set([
-        ...Object.keys(parent),
-        ...Object.keys(child),
-    ])) {
-        // Ne pas copier les surcharges d'éléments.
-        if (key.startsWith("$")) {
-            continue;
-        }
-
+    const keys = new Set(
+        // @ts-expect-error -- TypeScript ne connait pas Iterator.concat().
+        Iterator.concat(Object.keys(parent), Object.keys(child)).filter(
+            // Enlever les surcharges d'éléments.
+            (/** @type {string} */ k) => !k.startsWith("$"),
+        ),
+    );
+    for (const key of keys) {
         // Si la propriété est dans les deux objets : fusionner les deux
         // valeurs.
-        if (key in parent && key in child) {
+        if (Object.hasOwn(parent, key) && Object.hasOwn(child, key)) {
             overridden[key] = merge(parent[key], child[key]);
             // Si la propriété est seulement dans l'objet parent.
-        } else if (key in parent) {
+        } else if (Object.hasOwn(parent, key)) {
             overridden[key] = clone(parent[key]);
-            // Si la propriété est seulement dans l'objet enfant.
+            // Sinon la propriété est seulement dans l'objet enfant.
         } else {
             overridden[key] = clone(child[key]);
         }
@@ -202,14 +207,16 @@ export const inherit = async (obj, options) => {
  * @returns {Promise<any>} Une promesse contenant l'objet étendu.
  */
 export const extend = (obj, options) => {
-    return walkAsync(obj, (/** @type {any} */ v) => inherit(v, options));
+    return walkAsync(obj, (/** @type {Record<string, any>} */ v) =>
+        inherit(v, options),
+    );
 };
 
 /**
  * Charge un objet JSON depuis une URL.
  *
- * @param {string|URL} url       L'URL du fichier JSON.
- * @param {Options}    [options] Les options.
+ * @param {string | URL} url       L'URL du fichier JSON.
+ * @param {Options}      [options] Les options.
  * @returns {Promise<any>} Une promesse contenant l'objet.
  */
 export const load = async (url, options) => {

@@ -12,4 +12,11 @@ import { extend, load, merge, parse } from "./jfather.js";
  * @typedef {import('./jfather.js').Options} Options
  */
 
-export default { extend, load, merge, parse };
+/**
+ * Namespace par défaut de JFather.
+ *
+ * @namespace
+ */
+const JFather = { extend, load, merge, parse };
+
+export default JFather;

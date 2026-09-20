@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration
     default="false"
-    name="clean"
+    name="test:unit:deno"
     type="js.build_tools.npm"
     nameIsGenerated="true"
   >
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
-      <script value="clean" />
+      <script value="test:unit:deno" />
     </scripts>
     <node-interpreter value="project" />
     <envs />

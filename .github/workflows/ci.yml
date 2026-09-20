@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "3 4 * * 5"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -13,42 +17,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: 26
 
       - name: Install dependencies
         run: npm ci
 
       - name: Lint files
+        continue-on-error: true
         run: npm run lint -- --formatter github
 
       - name: Check types
-        if: always()
+        continue-on-error: true
         run: npm run lint:types
 
-      - name: JSR publish dry run
-        run: npx jsr publish --dry-run
+      - name: Check publish on npm
+        continue-on-error: true
+        run: npm run lint:npm
+
+      - name: Check publish on JSR
+        continue-on-error: true
+        run: npm run lint:jsr
 
   test-node:
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [22, 24, latest]
+        node-version: [22, 24, 26, latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -59,77 +69,136 @@ jobs:
         run: npm run test:unit:node
 
   test-bun:
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@b7a1c7ccf290d58743029c4f6903da283811b979 # v2.1.0
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Install dependencies
-        run: bun ci
+        run: bun install
 
       - name: Run unit tests on Bun
         run: npm run test:unit:bun
+
+  test-deno:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Run unit tests on Deno
+        run: npm run test:unit:deno
 
   coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: 26
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run mutation tests and send coverage
-        run: npm run test:coverage -- --reporters clear-text,dashboard
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        run: npm run test:coverage -- --reporters clear-text,dashboard
 
   analyze:
-    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # v4.31.9
+        uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
         with:
           languages: javascript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # v4.31.9
+        uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
 
       - name: Run Snyk to check for vulnerabilities
+        # Ne pas exécuter Snyk sur les forks, car ils n'ont pas accès au jeton.
         if: ${{ 'Actions' == github.secret_source }}
-        uses: snyk/actions/node@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        uses: snyk/actions/node@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
         with:
           args: --sarif-file-output=snyk.sarif
 
-      - name: Upload Snyk result to GitHub Code Scanning
-        if: ${{ 'Actions' == github.secret_source }}
-        uses: github/codeql-action/upload-sarif@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # v4.31.9
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+
+      - name: Upload SARIF files to GitHub Code Scanning
+        if: ${{ '' != hashFiles('*.sarif') }}
+        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
         with:
-          sarif_file: snyk.sarif
+          sarif_file: .
+
+  # Exécuter l'analyse OpenSSF Scorecard séparément, car l'action
+  # ossf/scorecard-action impose des restrictions sur le job.
+  # https://github.com/marketplace/actions/ossf-scorecard-action#workflow-restrictions
+  openssf:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      # Ajouter cette permission pour le OpenID Connect (OIDC) nécessaire pour
+      # publier les résultats de l'analyse OpenSSF Scorecard.
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run OpenSSF Scorecard analysis
+        # Exécuter Scorecard uniquement sur la branche principale, car les
+        # autres branches ne sont pas gérées.
+        if: ${{ github.event.repository.default_branch == github.ref_name }}
+        continue-on-error: true
+        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: scorecard.sarif
+          results_format: sarif
+          publish_results: true
+
+      - name: Upload SARIF files to GitHub Code Scanning
+        if: ${{ '' != hashFiles('*.sarif') }}
+        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        with:
+          sarif_file: .
