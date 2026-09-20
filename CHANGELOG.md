@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.1](https://github.com/regseb/jfather/compare/v0.5.0...v0.5.1) (2026-09-20)
+
+### Bug Fixes
+
+- Escape overriden key.
+  ([37eaa5b](https://github.com/regseb/jfather/commit/37eaa5b9b73554a744692ac73ebe160d3c0d6d94))
+- Link source and types (JSR "slow types").
+  ([448a5c3](https://github.com/regseb/jfather/commit/448a5c31d64f4e78f125240415fccc3e42a57263))
+
 ## [0.5.0](https://github.com/regseb/jfather/compare/v0.4.0...v0.5.0) (2026-01-05)
 
 ### Features
